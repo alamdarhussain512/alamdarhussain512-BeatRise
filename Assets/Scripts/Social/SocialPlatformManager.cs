@@ -9,6 +9,10 @@ public class PlatformConfig {
     public float followerConversion = 0.05f; // fraction of reach that converts
     public float reachFactor = 1.0f; // base reach multiplier
     public float algorithmBoost = 1.0f; // platform-specific boost (virality)
+
+    // Risk / reputation mechanics for "dark web" style platforms
+    public bool isRisky = false; // if true, publishing can have negative side-effects
+    public int reputationRisk = 0; // reputation loss if negative event occurs
 }
 
 [System.Serializable]
@@ -42,7 +46,9 @@ public class SocialPlatformManager : MonoBehaviour {
             new PlatformConfig { platformName = "Gram", followerCount = 10000, followerConversion = 0.04f, reachFactor = 0.95f, algorithmBoost = Balancing.InstagramVirality },
             new PlatformConfig { platformName = "XBird", followerCount = 6000, followerConversion = 0.02f, reachFactor = 0.8f, algorithmBoost = 0.9f },
             new PlatformConfig { platformName = "Face", followerCount = 5000, followerConversion = 0.015f, reachFactor = 0.6f, algorithmBoost = 0.7f },
-            new PlatformConfig { platformName = "SoundSpot", followerCount = 4000, followerConversion = 0.025f, reachFactor = 0.9f, algorithmBoost = 1.0f }
+            new PlatformConfig { platformName = "SoundSpot", followerCount = 4000, followerConversion = 0.025f, reachFactor = 0.9f, algorithmBoost = 1.0f },
+            // Fictional "dark web" style platform with risk mechanics
+            new PlatformConfig { platformName = "ShadowNet", followerCount = 1500, followerConversion = 0.10f, reachFactor = 0.5f, algorithmBoost = 2.0f, isRisky = true, reputationRisk = 10 }
         };
     }
 
@@ -71,6 +77,19 @@ public class SocialPlatformManager : MonoBehaviour {
         platform.followerCount += gained;
 
         Debug.Log($"Published post on {platform.platformName}: reach={finalReach}, gained={gained}, totalFollowers={platform.followerCount}");
+
+        // Risk mechanics: risky platforms can cause reputation loss or other side-effects
+        if(platform.isRisky && GameManager.Instance != null) {
+            float chance = UnityEngine.Random.Range(0f,1f);
+            // 20% chance of negative event
+            if(chance < 0.2f) {
+                var profile = GameManager.Instance.playerProfile;
+                if(profile != null) {
+                    profile.reputation = Mathf.Max(0, profile.reputation - platform.reputationRisk);
+                    Debug.Log($"Risky publish: {platform.platformName} caused reputation loss of {platform.reputationRisk}. New reputation={profile.reputation}");
+                }
+            }
+        }
 
         OnPostPublished?.Invoke(platform, post, finalReach, gained);
         return (finalReach, gained);

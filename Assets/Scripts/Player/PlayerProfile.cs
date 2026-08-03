@@ -19,6 +19,7 @@ public class PlayerProfile {
     public int fans = 100;
     public float energy = Balancing.MaxEnergy;
     public Skills skills = new Skills();
+    public int reputation = 50; // 0-100
 
     // Add XP and handle leveling
     public void AddXP(int amount) {
