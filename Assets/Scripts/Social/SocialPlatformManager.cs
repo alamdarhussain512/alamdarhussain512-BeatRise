@@ -33,13 +33,6 @@ public class Post {
     public float engagementRate = 0.05f; // 0-1
 }
 
-[System.Serializable]
-public class PlatformSnapshot {
-    public string platformName;
-    public int followerCount;
-    public int bannedUntilDay = 0;
-}
-
 public class SocialPlatformManager : MonoBehaviour {
     public static SocialPlatformManager Instance;
     void Awake() {

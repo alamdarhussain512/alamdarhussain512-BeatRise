@@ -2,18 +2,19 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [System.Serializable]
+public class PlatformSnapshot {
+    public string platformName;
+    public int followerCount;
+    public int bannedUntilDay = 0;
+}
+
+[System.Serializable]
 public class Skills {
     public int vocals = 1;
     public int production = 1;
     public int stagecraft = 1;
     public int charisma = 1;
     public int marketing = 1;
-}
-
-[System.Serializable]
-public class PlatformSnapshot {
-    public string platformName;
-    public int followerCount;
 }
 
 [System.Serializable]

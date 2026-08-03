@@ -27,7 +27,8 @@ public class SocialUIManager : MonoBehaviour {
         var canvasGO = new GameObject("SocialCanvas");
         canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvasGO.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        var scaler = canvasGO.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         canvasGO.AddComponent<GraphicRaycaster>();
         DontDestroyOnLoad(canvasGO);
 
@@ -155,19 +156,63 @@ public class SocialUIManager : MonoBehaviour {
     Dropdown CreateDropdown(string name, Transform parent) {
         var go = CreateUIObject(name, parent);
         var dd = go.AddComponent<Dropdown>();
-        dd.targetGraphic = go.AddComponent<Image>();
+        // minimal visuals
+        var img = go.AddComponent<Image>();
+        img.color = Color.white * 0.1f;
+        dd.targetGraphic = img;
         dd.captionText = CreateText(name+"_Caption", go.transform, "");
         dd.template = CreateDropdownTemplate(go.transform);
         return dd;
     }
 
     RectTransform CreateDropdownTemplate(Transform root) {
+        // Build a usable dropdown template hierarchy
         var templateGO = CreateUIObject("Template", root);
         var rt = templateGO.AddComponent<RectTransform>();
-        templateGO.SetActive(false);
-        var img = templateGO.AddComponent<Image>();
-        img.color = Color.white;
+        // size and anchors
+        rt.anchorMin = new Vector2(0,0);
+        rt.anchorMax = new Vector2(1,0.6f);
+        rt.pivot = new Vector2(0.5f,1f);
+
+        // Background
+        var bg = templateGO.AddComponent<Image>();
+        bg.color = new Color(0f,0f,0f,0.9f);
+
+        // Viewport (ScrollRect viewport)
         var viewport = CreateUIObject("Viewport", templateGO.transform);
+        var vpImg = viewport.AddComponent<Image>();
+        vpImg.color = new Color(1,1,1,0.01f);
+        var mask = viewport.AddComponent<Mask>();
+        mask.showMaskGraphic = false;
+
+        // Content (will hold items)
+        var content = CreateUIObject("Content", viewport.transform);
+        var contentRT = content.GetComponent<RectTransform>();
+        var layout = content.AddComponent<VerticalLayoutGroup>();
+        layout.childForceExpandHeight = false;
+        layout.childControlHeight = true;
+        content.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        // ScrollRect on template
+        var scroll = templateGO.AddComponent<ScrollRect>();
+        scroll.content = contentRT;
+        scroll.viewport = viewport.GetComponent<RectTransform>();
+        scroll.horizontal = false;
+
+        // Item template
+        var item = CreateUIObject("Item", content.transform);
+        var itemImg = item.AddComponent<Image>();
+        itemImg.color = new Color(1,1,1,0.05f);
+        var toggle = item.AddComponent<Toggle>();
+        toggle.transition = Selectable.Transition.ColorTint;
+        var label = CreateText("ItemLabel", item.transform, "Option");
+        label.alignment = TextAnchor.MiddleLeft;
+        label.rectTransform.anchorMin = new Vector2(0,0);
+        label.rectTransform.anchorMax = new Vector2(1,1);
+
+        // Hide item by default (Dropdown expects template to be inactive)
+        templateGO.SetActive(false);
+
         return rt;
     }
 
