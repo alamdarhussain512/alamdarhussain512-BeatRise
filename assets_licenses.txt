@@ -1,0 +1,25 @@
+Free assets curated for BeatRise-Starter
+
+Art & UI:
+- Kenney.nl free asset packs (UI, GUI) - https://kenney.nl/assets
+  License: Most Kenney assets are public domain (CC0) or permissive; check specific pack.
+
+Music & Loops:
+- Mixkit Music (free, royalty-free) - https://mixkit.co/free-music/
+  License: Free for commercial use, no attribution required (check Mixkit license page).
+- YouTube Audio Library - https://studio.youtube.com/audiolibrary/music
+  License: Free to use, some tracks require attribution; verify per track.
+
+SFX:
+- Freesound.org - https://freesound.org/ (filter for CC0 or CC-BY)
+  License: Varies; prefer CC0 or provide attribution in credits for CC-BY.
+- Zapsplat (free tier) - https://www.zapsplat.com/
+  License: Free with attribution for free tier.
+
+Fonts & Icons:
+- Google Fonts - https://fonts.google.com/
+- Font Awesome (free icons) - https://fontawesome.com/
+
+Notes:
+- I will include an assets_licenses.txt file in the project and mark exactly which files require attribution.
+- For MVP I will prefer CC0/public-domain assets and Mixkit free music to avoid attribution overhead.
