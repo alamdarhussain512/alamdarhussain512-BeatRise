@@ -32,6 +32,10 @@ public class PlayerProfile {
     // Persisted social platform follower snapshots
     public List<PlatformSnapshot> socialPlatforms = new List<PlatformSnapshot>();
 
+    // Underground/notoriety
+    public int notoriety = 0; // 0-100
+    public List<OfferUsageSnapshot> offerUsages = new List<OfferUsageSnapshot>();
+
     // Add XP and handle leveling
     public void AddXP(int amount) {
         xp += amount;
