@@ -19,4 +19,11 @@ public static class Balancing {
     public static float TikTokVirality = 1.6f;
     public static float YouTubeVirality = 1.0f;
     public static float InstagramVirality = 0.9f;
+
+    // Risk systems tuning
+    public static float RiskyPlatformBaseChance = 0.20f; // base chance of a negative event on risky platforms
+    public static float RiskyFineMultiplier = 0.05f; // fraction of current money taken as fine
+    public static int RiskyFansLossMax = 500; // max fans lost on a serious incident
+    public static int RiskyBanDaysMin = 1;
+    public static int RiskyBanDaysMax = 7;
 }
