@@ -10,8 +10,17 @@ public class SocialTuner : MonoBehaviour {
     public float riskyBaseChance = Balancing.RiskyPlatformBaseChance;
     public float riskyFineMultiplier = Balancing.RiskyFineMultiplier;
 
+    // Underground/broker tuning
+    public float notorietyDetectionScale = Balancing.UndergroundNotorietyDetectionScale;
+    public float brokerTrustMultiplier = Balancing.BrokerTrustCostMultiplier;
+
+    // Simulation settings
+    public int simulationIterations = 500;
+    public enum SimulationMode { PublishOnly, OffersOnly, Mixed }
+    public SimulationMode simMode = SimulationMode.Mixed;
+
     void OnGUI() {
-        GUILayout.BeginArea(new Rect(10,10,320,220), "Social Tuner", GUI.skin.window);
+        GUILayout.BeginArea(new Rect(10,10,360,360), "Social Tuner", GUI.skin.window);
         GUILayout.Label("Platform virality");
         tikTokVirality = GUILayout.HorizontalSlider(tikTokVirality, 0.5f, 4.0f);
         GUILayout.Label($"Tok: {tikTokVirality:F2}");
@@ -27,8 +36,25 @@ public class SocialTuner : MonoBehaviour {
         riskyFineMultiplier = GUILayout.HorizontalSlider(riskyFineMultiplier, 0f, 0.5f);
         GUILayout.Label($"Fine multiplier: {riskyFineMultiplier:F2}");
 
+        GUILayout.Space(8);
+        GUILayout.Label("Underground / Broker tuning");
+        notorietyDetectionScale = GUILayout.HorizontalSlider(notorietyDetectionScale, 0f, 0.02f);
+        GUILayout.Label($"Notoriety detection scale: {notorietyDetectionScale:F4}");
+        brokerTrustMultiplier = GUILayout.HorizontalSlider(brokerTrustMultiplier, 0.5f, 1.2f);
+        GUILayout.Label($"Broker trust cost multiplier: {brokerTrustMultiplier:F2}");
+
+        GUILayout.Space(8);
+        GUILayout.Label("Simulation");
+        GUILayout.Label($"Iterations: {simulationIterations}");
+        simulationIterations = (int)GUILayout.HorizontalSlider(simulationIterations, 10, 5000);
+        simMode = (SimulationMode)GUILayout.SelectionGrid((int)simMode, new string[] { "PublishOnly", "OffersOnly", "Mixed" }, 3);
+
         if(GUILayout.Button("Apply")) {
             Apply();
+        }
+
+        if(GUILayout.Button("Run Simulation")) {
+            RunSimulation();
         }
 
         GUILayout.EndArea();
@@ -40,6 +66,19 @@ public class SocialTuner : MonoBehaviour {
         Balancing.InstagramVirality = instagramVirality;
         Balancing.RiskyPlatformBaseChance = riskyBaseChance;
         Balancing.RiskyFineMultiplier = riskyFineMultiplier;
+        Balancing.UndergroundNotorietyDetectionScale = notorietyDetectionScale;
+        Balancing.BrokerTrustCostMultiplier = brokerTrustMultiplier;
         Debug.Log("SocialTuner: applied balancing values");
+    }
+
+    void RunSimulation() {
+        var sim = FindObjectOfType<Simulator>();
+        if(sim == null) {
+            Debug.LogError("Simulator not found in scene. Add a Simulator GameObject with the Simulator component to run simulations.");
+            return;
+        }
+
+        Debug.Log($"Starting simulation: mode={simMode} iterations={simulationIterations}");
+        sim.RunSimulation(simulationIterations, simMode.ToString());
     }
 }
