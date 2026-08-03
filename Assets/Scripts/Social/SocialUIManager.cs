@@ -16,8 +16,19 @@ public class SocialUIManager : MonoBehaviour {
     Button publishButton;
     Text statusText;
 
+    // Joke UI
+    Button jokeButton;
+    Text jokeText;
+
     void Start() {
         manager = SocialPlatformManager.Instance ?? FindObjectOfType<SocialPlatformManager>();
+
+        // Ensure RandomJokeManager exists
+        if(RandomJokeManager.Instance == null) {
+            var go = new GameObject("RandomJokeManager");
+            go.AddComponent<RandomJokeManager>();
+        }
+
         BuildUI();
         RefreshPlatformList();
     }
@@ -89,11 +100,30 @@ public class SocialUIManager : MonoBehaviour {
         pbRT.anchorMax = new Vector2(0.30f, 0.11f);
         publishButton.onClick.AddListener(OnPublishClicked);
 
+        // Joke button
+        jokeButton = CreateButton("JokeButton", panel.transform, "Get Joke");
+        var jbRT = jokeButton.GetComponent<RectTransform>();
+        jbRT.anchorMin = new Vector2(0.32f, 0.02f);
+        jbRT.anchorMax = new Vector2(0.50f, 0.11f);
+        jokeButton.onClick.AddListener(OnJokeClicked);
+
         // Status text
         statusText = CreateText("StatusText", panel.transform, "Ready to publish.");
         statusText.alignment = TextAnchor.MiddleLeft;
-        statusText.rectTransform.anchorMin = new Vector2(0.32f, 0.02f);
+        statusText.rectTransform.anchorMin = new Vector2(0.52f, 0.02f);
         statusText.rectTransform.anchorMax = new Vector2(0.98f, 0.11f);
+
+        // Joke display area (below the panel)
+        var jokePanel = CreateUIObject("JokePanel", canvasGO.transform);
+        var jpImg = jokePanel.AddComponent<Image>(); jpImg.color = new Color(0f,0f,0f,0.5f);
+        var jprt = jokePanel.GetComponent<RectTransform>();
+        jprt.anchorMin = new Vector2(0.05f, 0.40f);
+        jprt.anchorMax = new Vector2(0.95f, 0.53f);
+        jprt.offsetMin = jprt.offsetMax = Vector2.zero;
+
+        jokeText = CreateText("JokeText", jokePanel.transform, "Press 'Get Joke' to fetch a random joke.");
+        jokeText.fontSize = 14;
+        jokeText.alignment = TextAnchor.UpperLeft;
     }
 
     void RefreshPlatformList() {
@@ -129,6 +159,11 @@ public class SocialUIManager : MonoBehaviour {
 
         // refresh dropdown display (show updated follower counts)
         RefreshPlatformList();
+    }
+
+    void OnJokeClicked() {
+        if(RandomJokeManager.Instance == null) { statusText.text = "Joke manager not found"; return; }
+        RandomJokeManager.Instance.RequestJoke(jokeText);
     }
 
     // Helper factory methods
