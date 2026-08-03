@@ -24,6 +24,10 @@ public class GameManager : MonoBehaviour {
         if(timeSystem == null) timeSystem = FindObjectOfType<TimeSystem>();
         if(playerProfile == null) playerProfile = SaveSystem.Load();
 
+        // Import social follower counts from save (if any)
+        var spm = SocialPlatformManager.Instance ?? FindObjectOfType<SocialPlatformManager>();
+        spm?.ImportFromProfile(playerProfile);
+
         // Hook into time system to handle hourly effects
         if(timeSystem != null) timeSystem.OnHourChanged += HandleHourlyTick;
     }
@@ -43,6 +47,10 @@ public class GameManager : MonoBehaviour {
     }
 
     public void Save() {
+        // Export current platform follower counts into the profile before saving
+        var spm = SocialPlatformManager.Instance ?? FindObjectOfType<SocialPlatformManager>();
+        spm?.ExportToProfile(playerProfile);
+
         SaveSystem.Save(playerProfile);
         OnGameSaved?.Invoke();
     }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class Skills {
@@ -7,6 +8,12 @@ public class Skills {
     public int stagecraft = 1;
     public int charisma = 1;
     public int marketing = 1;
+}
+
+[System.Serializable]
+public class PlatformSnapshot {
+    public string platformName;
+    public int followerCount;
 }
 
 [System.Serializable]
@@ -20,6 +27,9 @@ public class PlayerProfile {
     public float energy = Balancing.MaxEnergy;
     public Skills skills = new Skills();
     public int reputation = 50; // 0-100
+
+    // Persisted social platform follower snapshots
+    public List<PlatformSnapshot> socialPlatforms = new List<PlatformSnapshot>();
 
     // Add XP and handle leveling
     public void AddXP(int amount) {

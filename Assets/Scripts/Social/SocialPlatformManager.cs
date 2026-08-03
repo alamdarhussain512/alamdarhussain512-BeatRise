@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
 public class PlatformConfig {
@@ -99,5 +100,24 @@ public class SocialPlatformManager : MonoBehaviour {
     public (int reach, int gained) PublishPost(string platformName, Post post) {
         var p = GetPlatformByName(platformName);
         return PublishPost(p, post);
+    }
+
+    // Persist platform follower counts into the player's profile
+    public void ExportToProfile(PlayerProfile profile) {
+        if(profile == null) return;
+        profile.socialPlatforms = platforms.Select(p => new PlatformSnapshot { platformName = p.platformName, followerCount = p.followerCount }).ToList();
+    }
+
+    // Load platform follower counts from player's profile
+    public void ImportFromProfile(PlayerProfile profile) {
+        if(profile == null || profile.socialPlatforms == null || profile.socialPlatforms.Count == 0) return;
+        foreach(var snap in profile.socialPlatforms) {
+            var existing = GetPlatformByName(snap.platformName);
+            if(existing != null) existing.followerCount = snap.followerCount;
+            else {
+                // if platform not found, add a placeholder platform with the saved follower count
+                platforms.Add(new PlatformConfig { platformName = snap.platformName, followerCount = snap.followerCount });
+            }
+        }
     }
 }
