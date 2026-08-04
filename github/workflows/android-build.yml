@@ -1,0 +1,47 @@
+github/workflows/android-build.yml
+name: Build Android APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android (APK)
+    runs-on: ubuntu-latest
+    env:
+      UNITY_VERSION: '2022.3.20f1'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Activate Unity license (if provided)
+        if: secrets.UNITY_LICENSE != ''
+        uses: webbertakken/unity-actions/auth@v2
+        with:
+          unityLicense: ${{ secrets.UNITY_LICENSE }}
+
+      - name: Setup Android keystore (if provided)
+        if: secrets.ANDROID_KEYSTORE_B64 != ''
+        run: |
+          echo "Decoding Android keystore from secret ANDROID_KEYSTORE_B64"
+          mkdir -p $HOME/.android
+          echo "${{ secrets.ANDROID_KEYSTORE_B64 }}" | base64 -d > $HOME/.android/${{ secrets.ANDROID_KEYSTORE_NAME }}
+          echo "ANDROID_KEYSTORE_PATH=$HOME/.android/${{ secrets.ANDROID_KEYSTORE_NAME }}" >> $GITHUB_ENV
+          echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "ANDROID_KEY_ALIAS_PASSWORD=${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Build Android with game-ci/unity-builder
+        uses: game-ci/unity-builder@v2
+        with:
+          projectPath: .
+          unityVersion: ${{ env.UNITY_VERSION }}
+          targetPlatform: Android
+          buildName: AndroidBuild
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/Android/**/*.apk
