@@ -1,11 +1,10 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
-public class PlatformSnapshot {
-    public string platformName;
-    public int followerCount;
-    public int bannedUntilDay = 0;
+public class OfferUsageSnapshot {
+    public string offerId;
+    public int timesUsed;
 }
 
 [System.Serializable]
@@ -35,6 +34,9 @@ public class PlayerProfile {
     // Underground/notoriety
     public int notoriety = 0; // 0-100
     public List<OfferUsageSnapshot> offerUsages = new List<OfferUsageSnapshot>();
+
+    // Videos persisted
+    public List<VideoSnapshot> videos = new List<VideoSnapshot>();
 
     // Add XP and handle leveling
     public void AddXP(int amount) {
