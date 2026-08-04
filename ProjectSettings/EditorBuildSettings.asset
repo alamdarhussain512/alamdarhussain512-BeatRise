@@ -1,0 +1,21 @@
+%YAML 1.1
+EditorBuildSettings:
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Boot.unity
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+  - enabled: 1
+    path: Assets/Scenes/Dashboard.unity
+  - enabled: 1
+    path: Assets/Scenes/Calendar.unity
+  - enabled: 1
+    path: Assets/Scenes/Studio.unity
+  - enabled: 1
+    path: Assets/Scenes/SocialHub.unity
+  - enabled: 1
+    path: Assets/Scenes/Gig.unity
+  - enabled: 1
+    path: Assets/Scenes/Shop.unity
+  - enabled: 1
+    path: Assets/Scenes/Settings.unity
