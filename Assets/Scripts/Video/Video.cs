@@ -9,11 +9,17 @@ public class VideoDayStat {
 }
 
 [Serializable]
+public enum CommentSentiment { Positive, Neutral, Negative }
+
+[Serializable]
 public class Comment {
     public string id;
     public string author;
     public string text;
     public int likes;
+    public CommentSentiment sentiment;
+
+    public Comment() { id = Guid.NewGuid().ToString(); }
 }
 
 [Serializable]

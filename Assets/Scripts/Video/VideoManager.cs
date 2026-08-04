@@ -93,7 +93,15 @@ public class VideoManager : MonoBehaviour {
                 if(gm != null) gm.playerProfile.money += Mathf.FloorToInt(rev);
             }
 
-            Telemetry.Emit("VideoDaySimulated", $"id={v.id};day={currentDay};views={dayViews};subs={subs};rev={v.revenue:F2}");
+            // Generate comments for this day's views and adjust reputation based on sentiment
+            int pos=0, neu=0, neg=0;
+            VideoComments.GenerateComments(v, dayViews, out pos, out neu, out neg);
+            if(gm != null) {
+                int repDelta = Mathf.Clamp(pos - neg, -3, 3);
+                gm.playerProfile.reputation = Mathf.Clamp(gm.playerProfile.reputation + repDelta, 0, 100);
+            }
+
+            Telemetry.Emit("VideoDaySimulated", $"id={v.id};day={currentDay};views={dayViews};subs={subs};rev={v.revenue:F2};comments+={pos+neu+neg}");
         }
 
         // persist summaries
